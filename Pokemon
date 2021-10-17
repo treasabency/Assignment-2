@@ -1,0 +1,18 @@
+import csv
+
+# Question 1
+def percentage_level(f):
+    data = open(f, 'r')
+    data = csv.DictReader(data)
+    level = []
+    final = []
+    for col in data:
+        level.append(col['level'])
+    for i in range(0,len(level)):
+        if float(level[i]) >= 40.0:
+            final.append(float(level[i]))
+    with open('pokemon1.txt', 'a') as output:
+        output.write("Percentage of fire type Pokemons at or above level 40 = ")
+        output.write(str(round(sum(final)/ len(final))))
+    
+percentage_level('pokemonTrain.csv')
