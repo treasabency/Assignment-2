@@ -115,3 +115,34 @@ def missingValFix():
                             row['hp'] = bAvgHp
                         writer.writerow(row)
 missingValFix()
+
+
+
+# Question 4
+def pokemonTypes():
+    personalities = {}
+    with open('pokemonResult.csv') as infile: 
+        reader = csv.DictReader(infile)
+        for row in reader:
+            if row['type'] in personalities.keys():
+                if row['personality'] not in personalities[row['type']]:
+                    personalities[row['type']].append(row['personality'])
+            else:
+                personalities[row['type']] = [row['personality']]
+
+    l = sorted(personalities.items())
+    with open('pokemon4.txt', 'a') as output:
+        output.write("Pokemon type to personality mapping:\n")
+        output.write("\n")
+        for i in range(0,len(l)):
+            output.write(l[i][0])
+            output.write(": ")
+            val = sorted(l[i][1])
+            for j in range(0, len(val)-1):
+                output.write(val[j])
+                output.write(", ")
+            output.write(val[len(val)-1])
+            output.write("\n")
+    
+        
+pokemonTypes()
