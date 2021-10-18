@@ -96,7 +96,7 @@ def missingValFix():
     
             with open('pokemonResult.csv','w',newline='') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames = reader.fieldnames, delimiter=',')
-                
+                writer.writeheader()
                 for row in reader:
                     if int(row['level']) > threshold:
                         if row['atk'] == 'NaN':
