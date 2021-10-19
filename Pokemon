@@ -146,3 +146,18 @@ def pokemonTypes():
     
         
 pokemonTypes()
+
+
+def avgHP():
+    hp = []
+    with open('pokemonResult.csv') as infile: 
+        reader = csv.DictReader(infile)
+        for row in reader:
+            if(row['stage'] == '3'):
+                hp.append(float(row['hp']))
+    avg = sum(hp)/ len(hp)
+    with open('pokemon5.txt', 'a') as output:
+        output.write("Average hit point for Pokemons of stage 3.0 = ")
+        output.write(str(round(avg)))
+
+avgHP()
