@@ -1,7 +1,7 @@
 import csv
 #Most likely will combine them all into one function so it's easier to write to file
 #question 1
-def round_age(f):
+def round_age(f, lat_avg_dict, long_avg_dict):
     with open("covidResult.csv", "w") as output:
         writer = csv.writer(output, delimiter = ",")
         with open(f) as covid_file:
@@ -10,6 +10,7 @@ def round_age(f):
             writer.writerow(col_name)
             for num, row in enumerate(reader):
                 #question 1
+                province = row[4]
                 if "-" in row[1]:
                     low_age, high_age = (row[1].strip()).split("-")
                     #print(low_age, "   ", high_age)
@@ -21,22 +22,63 @@ def round_age(f):
                 symptom_day, symptom_month, symptom_year = row[8].split(".")
                 admission_day, admission_month, admission_year = row[9].strip().split('.')
                 confirm_day, confirm_month, confirm_year = row[10].strip().split('.')
-                #print("symptoms: ", symptom_day, " : ", symptom_month, " : ",symptom_year)
-                #print("admission: ", admission_day, " : ", admission_month, " : ",admission_year)
-                #print("confirmation: ", confirm_day, " : ", confirm_month, " : ",confirm_year)
                 row[8] = ".".join((symptom_month, symptom_day, symptom_year))
                 row[9] = ".".join((admission_month, admission_day, admission_year))
                 row[10] = ".".join((confirm_month, confirm_day, confirm_year))
-                
+                #question 3, 4, 5
+                #3: dictionaries of province:[list of latitude] and province:[list of longitude]
+                    #if new provice, create new element in dict, else add to dict[province]
+                    #if NaN, skip
+                    #run until it writes everything currently to covidResult.csv
+                    #then open covidResult.csv and check for NaN
+                if row[6] == "NaN":
+                    lat_avg = lat_avg_dict.get(province)
+                    row[6] = lat_avg
+                if row[7] == "NaN":
+                    long_avg = long_avg_dict.get(province)
+                    row[7] = long_avg
+                #4: dictionary of province: [(city, count)]
+                #5: 
                 writer.writerow(row)
-                
-                
-                
+    
+
 #extra function
 def print_all(f):
     with open(f) as covid_file:
         reader = csv.reader(covid_file)
         for num, row in enumerate(reader):
             print(num, row)
-round_age("covidTrain.csv")
+def get_lat_long(f):
+    lat_dict = {}
+    long_dict = {}
+    with open(f) as file:
+        reader = csv.reader(file)
+        col_name = next(reader)
+        for num, row in enumerate(reader):
+            lat = row[6]
+            long = row[7]
+            province = row[4]
+            if lat != "NaN":
+                if province not in lat_dict:
+                    lat_dict[province] = [lat]
+                else:
+                    lat_dict[province].append(lat)
+            if long != "NaN":
+                if province not in long_dict:
+                    long_dict[province] = [long]
+                else:
+                    long_dict[province].append(long)
+    return lat_dict, long_dict
+def convert_to_average(l_dict):
+    int_values = []
+    for province, values in l_dict.items():
+        for string in values:
+            int_values.append(float(string))
+        l_dict[province] = round(sum(int_values)/len(values), 2)
+    return l_dict
+
+lat_dict, long_dict = get_lat_long("covidTrain.csv")
+lat_average_dict = convert_to_average(lat_dict)
+long_average_dict = convert_to_average(long_dict)
+round_age("covidTrain.csv", lat_average_dict, long_average_dict)
 #print_all("covidTrain.csv")
