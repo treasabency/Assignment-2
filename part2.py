@@ -1,7 +1,7 @@
 import csv
+import re
 #Most likely will combine them all into one function so it's easier to write to file
-#question 1
-def round_age(f, lat_avg_dict, long_avg_dict, city_dict):
+def round_age(f, lat_avg_dict, long_avg_dict, city_dict, symptom_dict):
     with open("covidResult.csv", "w") as output:
         writer = csv.writer(output, delimiter = ",")
         with open(f) as covid_file:
@@ -42,6 +42,8 @@ def round_age(f, lat_avg_dict, long_avg_dict, city_dict):
                 if city_name == "NaN":
                     row[3] = city_dict[province][1]
                 #5: 
+                if row[11] == "NaN":
+                    row[11] = '; '.join(symptom_dict[province][1])
                 writer.writerow(row)
     
 
@@ -106,11 +108,37 @@ def get_city_dict(f):
         city_prov_dict[province] = city_prov_dict[province][0]
     return city_prov_dict
 
+def get_symptom_dict(f):
+    symptom_dict = {}
+    with open(f) as file:
+        reader = csv.reader(file)
+        col_name = next(reader)
+        for _, row in enumerate(reader):
+            symptoms_str = row[11].strip()
+            province = row[4]
+            symptoms_list = re.split('; |;', symptoms_str)
+            symp_list_2 = symptom_dict.get(province)
+            if symptoms_str != "NaN":
+                if province not in symptom_dict:
+                    symptom_dict[province] = [[1, symptoms_list]]
+                else: 
+                    in_list = False
+                    for i in range(0, len(symp_list_2)):
+                        if symp_list_2[i][1] == symptoms_list:
+                            symp_list_2[i][0] += 1
+                            in_list = True
+                    if not in_list:
+                        symptom_dict[province].append([1, symptoms_list])
+    for province, symptoms in symptom_dict.items():
+        symptom_dict[province] = sorted(symptoms, key = lambda e: (-e[0], e[1]))
+        symptom_dict[province] = symptom_dict[province][0]
+    return symptom_dict
+
+
 lat_dict, long_dict = get_lat_long("covidTrain.csv")
 lat_average_dict = convert_to_average(lat_dict)
 long_average_dict = convert_to_average(long_dict)
 city_dict = get_city_dict("covidTrain.csv")
-print(city_dict)
+symptom_dict = get_symptom_dict("covidTrain.csv")
+round_age("covidTrain.csv", lat_average_dict, long_average_dict, city_dict, symptom_dict)
 
-round_age("covidTrain.csv", lat_average_dict, long_average_dict, city_dict)
-#print_all("covidTrain.csv")
