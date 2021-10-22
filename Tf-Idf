@@ -1,0 +1,13 @@
+import re
+
+def cleanDoc(d):
+    
+    text = d.lower()
+    text = re.sub(r'http\S+', '',text)
+    text = re.sub(r'www\S+', '', text)
+    text = re.sub(r'[^a-zA-Z0-9]', ' ', text)
+    text = re.sub("\s+", " ", text)
+    print(text)
+
+string = "Hello3 I am BINA. www.hylo        !@# everyone@hello.       JIHN)  https://world.com))"
+cleanDoc(string)
