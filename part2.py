@@ -1,6 +1,5 @@
 import csv
 import re
-#Most likely will combine them all into one function so it's easier to write to file
 def round_age(f, lat_avg_dict, long_avg_dict, city_dict, symptom_dict):
     with open("covidResult.csv", "w") as output:
         writer = csv.writer(output, delimiter = ",")
@@ -27,10 +26,6 @@ def round_age(f, lat_avg_dict, long_avg_dict, city_dict, symptom_dict):
                 row[10] = ".".join((confirm_month, confirm_day, confirm_year))
                 #question 3, 4, 5
                 #3: dictionaries of province:[list of latitude] and province:[list of longitude]
-                    #if new provice, create new element in dict, else add to dict[province]
-                    #if NaN, skip
-                    #run until it writes everything currently to covidResult.csv
-                    #then open covidResult.csv and check for NaN
                 if row[6] == "NaN":
                     lat_avg = lat_avg_dict.get(province)
                     row[6] = lat_avg
@@ -141,4 +136,3 @@ long_average_dict = convert_to_average(long_dict)
 city_dict = get_city_dict("covidTrain.csv")
 symptom_dict = get_symptom_dict("covidTrain.csv")
 round_age("covidTrain.csv", lat_average_dict, long_average_dict, city_dict, symptom_dict)
-
