@@ -2,22 +2,23 @@ import re
 
 def cleanDoc(d):
     text = d.lower()
+    text = re.sub("\s+", ' ', text)
     text = re.sub(r'http\S+', '',text)
     text = re.sub(r'www\S+', '', text)
-    text = re.sub(r'[^a-zA-Z0-9]', ' ', text)
-    text = re.sub("\s+", " ", text)
-    #print(text.split())
-    return text.split()
-
-string = "Hello3 I am BINA. www.hylo        !@# everyone@hello.       JIHN)  https://world.com))"
+    text = re.sub('[\'",:!@#$%()]', '', text)
+    text = re.sub(r'[^a-zA-Z0-9_]', ' ', text)
+    return text
 
 
 def remStop(d):
     with open('stopwords.txt', 'r') as stopwords:
         stopwords = re.split('\n', stopwords.read())
-        final = [word for word in d if word not in stopwords]
-    #print(final)
-    return final
+        words = d.split()
+        final = [word for word in words if word not in stopwords]
+        result = ' '.join(final)
+        return result
+
+
 #This function takes in a word, and returns a root version of the word
 def stem_lem(word):
     if re.search('[a-zA-Z0-9]*ly$', word):
@@ -32,4 +33,15 @@ def stem_lem(word):
     return word
 #print(remStop(cleanDoc(string)))
 
-print(stem_lem("punishment"))
+inpfile = 'test1.txt'
+input = open(inpfile, 'r')
+input = input.read()
+clean = cleanDoc(input)
+cleaner = remStop(clean)
+words = cleaner.split()
+result = []
+for word in words:
+    result.append(stem_lem(word))
+final = ' '.join(result)
+output = open('preproc_'+ inpfile.split('.')[0], 'w')
+output.write(final)
