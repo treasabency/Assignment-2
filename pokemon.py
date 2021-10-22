@@ -59,27 +59,27 @@ def missingValFix():
     bThreshDef = []
     aThreshHp = []
     bThreshHp = []
-    threshold = 40
+    threshold = 40.0
     with open('pokemonTrain.csv') as infile: 
         reader = csv.reader(infile)
         
         next(reader, None)
         
         for row in reader:
-                if int(row[2]) > threshold:
+                if float(row[2]) > threshold:
                     if row[6] != 'NaN':
-                        aThreshAtk.append(int(row[6]))
+                        aThreshAtk.append(float(row[6]))
                     if row[7] != 'NaN':
-                        aThreshDef.append(int(row[7]))
+                        aThreshDef.append(float(row[7]))
                     if row[8] != 'NaN':
-                        aThreshHp.append(int(row[8]))
+                        aThreshHp.append(float(row[8]))
                 else:
                     if row[6] != 'NaN':
-                        bThreshAtk.append(int(row[6]))
+                        bThreshAtk.append(float(row[6]))
                     if row[7] != 'NaN':
-                        bThreshDef.append(int(row[7]))
+                        bThreshDef.append(float(row[7]))
                     if row[8] != 'NaN':
-                        bThreshHp.append(int(row[8]))
+                        bThreshHp.append(float(row[8]))
         
         aAvgAtk = round(sum(aThreshAtk)/len(aThreshAtk), 1)
         aAvgDef = round(sum(aThreshDef)/len(aThreshDef), 1)
@@ -95,7 +95,7 @@ def missingValFix():
 
                 writer.writeheader()
                 for row in reader:
-                    if int(row['level']) > threshold:
+                    if float(row['level']) > threshold:
                         if row['atk'] == 'NaN':
                             row['atk'] = aAvgAtk
                         if row['def'] == 'NaN':
@@ -146,7 +146,7 @@ def avgHP():
     with open('pokemonResult.csv') as infile: 
         reader = csv.DictReader(infile)
         for row in reader:
-            if(row['stage'] == '3'):
+            if(row['stage'] == '3.0'):
                 hp.append(float(row['hp']))
     avg = sum(hp)/ len(hp)
     with open('pokemon5.txt', 'a') as output:
