@@ -1,5 +1,5 @@
 import re
-
+import csv
 def cleanDoc(d):
     text = d.lower()
     text = re.sub("\s+", ' ', text)
@@ -33,7 +33,35 @@ def stem_lem(word):
     return word
 #print(remStop(cleanDoc(string)))
 
-inpfile = 'test1.txt'
+#continue working on this
+with open('tfidf_docs.txt', 'r') as all_files:
+    reader = csv.reader(all_files)
+    for _, row in enumerate(reader):
+        result = []
+        file_name = ''.join(row)
+        with open(file_name) as inpfile:
+            clean = cleanDoc(file_name)
+            cleaner = remStop(clean)
+            words = cleaner.split()
+            for word in words:
+                result.append(stem_lem(word))
+            final = ' '.join(result)
+            output = open('preproc_'+ file_name.split('.')[0], 'w')
+            output.write(final)
+    '''
+    with open(reader) as inpfile:
+        clean = cleanDoc(inpfile)
+        cleaner = remStop(clean)
+        words = cleaner.split()
+        result = []
+        for word in words:
+            result.append(stem_lem(word))
+        final = ' '.join(result)
+        output = open('preproc_'+ inpfile.split('.')[0], 'w')
+        output.write(final)
+        '''
+'''
+inpfile = 'd1.txt'
 input = open(inpfile, 'r')
 input = input.read()
 clean = cleanDoc(input)
@@ -45,3 +73,5 @@ for word in words:
 final = ' '.join(result)
 output = open('preproc_'+ inpfile.split('.')[0], 'w')
 output.write(final)
+
+'''
