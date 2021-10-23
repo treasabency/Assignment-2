@@ -40,7 +40,7 @@ def round_age(f, lat_avg_dict, long_avg_dict, city_dict, symptom_dict):
                 if row[11] == "NaN":
                     row[11] = '; '.join(symptom_dict[province][1])
                 writer.writerow(row)
-    
+                
 
 #extra function
 def print_all(f):
@@ -79,6 +79,7 @@ def convert_to_average(l_dict):
 
 def get_city_dict(f):
     city_prov_dict = {}
+    #{province: [[1, city1], [1, city2]]}
     with open(f) as file:
         reader = csv.reader(file)
         col_name = next(reader)
@@ -105,6 +106,7 @@ def get_city_dict(f):
 
 def get_symptom_dict(f):
     symptom_dict = {}
+    #{province: [{1, symptom1}, {1, symptom2]]}
     with open(f) as file:
         reader = csv.reader(file)
         col_name = next(reader)
