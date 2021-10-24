@@ -1,41 +1,37 @@
 import csv
 
-# Question 1
-
+# Question 1 
 def percentage_level():
+    firePokemon = []
+    firePokemonA = []
     with open('pokemonTrain.csv') as infile: 
         reader = csv.DictReader(infile)
-        level = []
-        final = []
         for row in reader:
-            level.append(row['level'])
-        for i in range(0,len(level)):
-            if float(level[i]) >= 40.0:
-                final.append(float(level[i]))
+            if row['type'] == 'fire' and row['name'] not in firePokemon:
+                firePokemon.append(row['name'])
+                if float(row['level']) >= 40.0 and row['name'] not in firePokemonA:
+                    firePokemonA.append(row['name'])
+        percentage = (len(firePokemonA)/len(firePokemon))*100
     with open('pokemon1.txt', 'a') as output:
         output.write("Percentage of fire type Pokemons at or above level 40 = ")
-        output.write(str(round(sum(final)/ len(final))))
+        output.write(str(percentage))
+
 
 # Question 2
-
 def missingTypeFix():
     with open('pokemonTrain.csv') as infile: 
         reader = csv.DictReader(infile)
         final = {}
         for row in reader:
             if row['type'] != 'NaN':
-                if row['type'] in final.keys():
-                    final[row['type']].append(row['weakness'])
+                if row['weakness'] in final.keys():
+                    final[row['weakness']].append(row['type'])
                 else:
-                    final[row['type']] = [row['weakness']]
+                    final[row['weakness']] = [row['type']]
 
         for key in final:
-            value = final[key]
-            final[key] = max(set(value), key = value.count)      
-
-        result = {}
-        for key in final:
-            result[final[key]] = key
+            value = sorted(final[key], reverse=False)
+            final[key] = max(set(value), key = value.count)     
 
     with open('pokemonTrain.csv') as infile: 
         reader = csv.reader(infile)
@@ -45,13 +41,13 @@ def missingTypeFix():
             
             for row in reader:
                 if row[4] == 'NaN':
-                    row[4] = result[row[5]]
+                    row[4] = final[row[5]]
                     writer.writerow(row)
                 else:
                     writer.writerow(row)
 
-# Question 3
 
+# Question 3
 def missingValFix():  
     aThreshAtk = []
     bThreshAtk = []
@@ -112,8 +108,8 @@ def missingValFix():
                             row['hp'] = bAvgHp
                         writer.writerow(row)
 
-# Question 4
 
+# Question 4
 def pokemonTypes():
     personalities = {}
     with open('pokemonResult.csv') as infile: 
@@ -139,8 +135,8 @@ def pokemonTypes():
             output.write(val[len(val)-1])
             output.write("\n")
 
-# Question 5
 
+# Question 5
 def avgHP():
     hp = []
     with open('pokemonResult.csv') as infile: 
