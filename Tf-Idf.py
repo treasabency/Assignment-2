@@ -1,5 +1,6 @@
 import re
 import csv
+import math
 from collections import Counter
 import os
 def cleanDoc(d):
@@ -49,23 +50,45 @@ def calculate_TF(word_frequency_list):
     return final_dict
 #returns {word: tf, word1: tf} of each doc
 
-#take in a dict of {doc1: [[word, tf], [word2, tf]], doc2: [[word, tf], [word2, tf]], etc}
-def calculate_IDF(doc_dicts):
-    #find the total number of docs with len(dict)
-    #start going through all the docs word list one by one,
-        #check how many docs the words are in by comparing if word in docs
-    #compute the IDF for that word by log(total_doc/docs_appeared_in)
-    #repeat for every word
-    
-    #it should return {word: IDF, word2: IDF, word3: IDF, etc}
-    return
+def unique(d):
+    infile = open(d, 'r')
+    infile = infile.read()
+    unique = []
+    for word in infile.split():
+        if word not in unique:
+            unique.append(word)
+    return unique
+
+def calculate_IDF(doc):
+    word_dict = {}      # format: {word1:count, word2, count,...}
+    idf_list = []       # fromat: [(word1, count), (word2,count),...]
+    doc_count = len(preproc_docs)
+    words = [a[0] for a in doc]
+    for file in preproc_docs:
+        temp = unique(file)
+        for word in words:
+            if word in temp:
+                if word in word_dict.keys():
+                    word_dict[word] += 1
+                else:
+                    word_dict[word] = 1
+    for key in word_dict:
+        if word_dict[key] == 3 or word_dict[key] == 0:      # if word count is 0 or 3 (since log(3/3) = 0)
+            idf = 1
+            idf_list.append((key, idf))
+        else:
+            idf = math.log(doc_count/word_dict[key])
+            idf_list.append((key, idf))
+    return idf_list
+
+
 #takes in a document
 def term_freq (filename):
     with open(filename, 'r') as file:
         input_ = file.read()
-        print(f'{filename}: {input_}')
+       # print(f'{filename}: {input_}')
         c = Counter(input_.split())
-        print(c)
+       # print(c)
         freq = c.most_common()
     #print(freq)
     return freq
@@ -89,15 +112,18 @@ with open('tfidf_docs.txt', 'r') as all_files:
             output = open('preproc_'+ file_name.split('.')[0], 'w')
             output.write(final)
             output.close()
-print(preproc_docs)
+
 TF_values = dict()
 for file in preproc_docs:
-    print(file)
     TF_values[file] = term_freq(file)
     
 TF = dict()
 for key, value in TF_values.items():
-    #print(calculate_TF(value))
     TF[key] = calculate_TF(value)
-    
-print(TF_values)
+
+IDF = dict()
+for key, value in TF_values.items():
+    IDF[key] = calculate_IDF(value)
+
+#print(TF)
+print(IDF)
