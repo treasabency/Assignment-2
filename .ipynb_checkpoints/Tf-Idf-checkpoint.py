@@ -49,30 +49,32 @@ with open('tfidf_docs.txt', 'r') as all_files:
             final = ' '.join(result)
             output = open('preproc_'+ file_name.split('.')[0], 'w')
             output.write(final)
-    '''
-    with open(reader) as inpfile:
-        clean = cleanDoc(inpfile)
-        cleaner = remStop(clean)
-        words = cleaner.split()
-        result = []
-        for word in words:
-            result.append(stem_lem(word))
-        final = ' '.join(result)
-        output = open('preproc_'+ inpfile.split('.')[0], 'w')
-        output.write(final)
-        '''
-'''
-inpfile = 'd1.txt'
-input = open(inpfile, 'r')
-input = input.read()
-clean = cleanDoc(input)
-cleaner = remStop(clean)
-words = cleaner.split()
-result = []
-for word in words:
-    result.append(stem_lem(word))
-final = ' '.join(result)
-output = open('preproc_'+ inpfile.split('.')[0], 'w')
-output.write(final)
 
-'''
+#input dict: {[counter, word1], [counter, word2], etc...}
+
+def calculate_TF(word_frequency_list):
+    #calculate total amount of words
+    total_word = 0
+    final_dict = {}
+    for counter, word in word_frequency_list:
+        total_word += counter
+    #calculate the TF of each word
+    for counter, word in word_frequency_list:
+        tf = counter/total_word
+        final_dict[word] = tf
+    
+    #for key, value in final_dict.items():
+        #print(key, "   ", value)
+    return final_dict
+
+#take in a dict of {doc1: [[word, tf], [word2, tf]], doc2: [[word, tf], [word2, tf]], etc}
+def calculate_IDF(doc_dicts):
+    #find the total number of docs with len(dict)
+    #start going through all the docs word list one by one,
+        #check how many docs the words are in by comparing if word in docs
+    #compute the IDF for that word by log(total_doc/docs_appeared_in)
+    #repeat for every word
+    
+    #it should return {word: IDF, word2: IDF, word3: IDF, etc}
+    return
+calculate_TF([(3, "the"), (2, "bye"), (1, "hand"), (6, "hi")])
