@@ -40,7 +40,8 @@ with open('tfidf_docs.txt', 'r') as all_files:
         result = []
         file_name = ''.join(row)
         with open(file_name) as inpfile:
-            clean = cleanDoc(file_name)
+            input1 = inpfile.read()
+            clean = cleanDoc(input1)
             cleaner = remStop(clean)
             words = cleaner.split()
             for word in words:
