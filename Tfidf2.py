@@ -1,6 +1,7 @@
 import re
 import csv
 from collections import Counter
+import os
 
 def cleanDoc(d):
     text = d.lower()
@@ -32,6 +33,14 @@ def stem_lem(word):
     return word
 
 preproc_docs = []
+def term_freq (d):
+    with open(d, 'r') as input:
+        input = input.read()
+        freq = Counter(input.split()).most_common()
+    #print(freq)
+    #print("------")
+    return freq
+
 #continue working on this
 with open('tfidf_docs.txt', 'r') as all_files:
     reader = csv.reader(all_files)
@@ -49,16 +58,8 @@ with open('tfidf_docs.txt', 'r') as all_files:
             preproc_docs.append('preproc_'+ file_name.split('.')[0])
             output = open('preproc_'+ file_name.split('.')[0], 'w')
             output.write(final)
-
-def term_freq (d):
-    with open(d, 'r') as input:
-        input = input.read()
-        freq = Counter(input.split()).most_common()
-    return freq
-
+            print("final: ", final)
 TF ={}
-print(preproc_docs)
 for file in preproc_docs:
-        TF[file] = term_freq(file)
-
-print(TF)
+    #print(file)
+    TF[file] = term_freq(file)

@@ -1,5 +1,7 @@
 import re
 import csv
+from collections import Counter
+import os
 def cleanDoc(d):
     text = d.lower()
     text = re.sub("\s+", ' ', text)
@@ -33,6 +35,7 @@ def stem_lem(word):
     return word
 #print(remStop(cleanDoc(string)))
 
+preproc_docs = []
 #continue working on this
 with open('tfidf_docs.txt', 'r') as all_files:
     reader = csv.reader(all_files)
@@ -47,19 +50,20 @@ with open('tfidf_docs.txt', 'r') as all_files:
             for word in words:
                 result.append(stem_lem(word))
             final = ' '.join(result)
+            preproc_docs.append('preproc_'+ file_name.split('.')[0])
             output = open('preproc_'+ file_name.split('.')[0], 'w')
             output.write(final)
-
+    
 #input dict: {[counter, word1], [counter, word2], etc...}
 
 def calculate_TF(word_frequency_list):
     #calculate total amount of words
     total_word = 0
     final_dict = {}
-    for counter, word in word_frequency_list:
+    for word, counter in word_frequency_list:
         total_word += counter
     #calculate the TF of each word
-    for counter, word in word_frequency_list:
+    for word, counter in word_frequency_list:
         tf = counter/total_word
         final_dict[word] = tf
     
@@ -77,4 +81,23 @@ def calculate_IDF(doc_dicts):
     
     #it should return {word: IDF, word2: IDF, word3: IDF, etc}
     return
-calculate_TF([(3, "the"), (2, "bye"), (1, "hand"), (6, "hi")])
+
+def term_freq (d):
+    with open(d, 'r') as input:
+        input = input.read()
+        freq = Counter(input.split()).most_common()
+    #print(freq)
+    #print("----")
+    return freq
+
+TF ={}
+for file in preproc_docs:
+    #print(file)
+    TF[file] = term_freq(file)
+
+#for key, value in TF.items():
+    #print(key, " : ", value)
+    
+#calculate_TF([(3, "the"), (2, "bye"), (1, "hand"), (6, "hi")])
+for key, value in TF.items():
+    print(calculate_TF(value))
