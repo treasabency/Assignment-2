@@ -40,13 +40,13 @@ def stem_lem(word):
 def calculate_TF(word_frequency_list):
     #calculate total amount of words
     total_word = 0
-    final_dict = {}
+    final_dict = []
     for word, counter in word_frequency_list:
         total_word += counter
     #calculate the TF of each word
     for word, counter in word_frequency_list:
         tf = counter/total_word
-        final_dict[word] = tf
+        final_dict.append((word, tf))
     return final_dict
 #returns {word: tf, word1: tf} of each doc
 
@@ -73,7 +73,7 @@ def calculate_IDF(doc):
                 else:
                     word_dict[word] = 1
     for key in word_dict:
-        if word_dict[key] == 3 or word_dict[key] == 0:      # if word count is 0 or 3 (since log(3/3) = 0)
+        if word_dict[key] == 0:      # if word count is 0, idf = 1
             idf = 1
             idf_list.append((key, idf))
         else:
@@ -81,21 +81,23 @@ def calculate_IDF(doc):
             idf_list.append((key, idf))
     return idf_list
 
+def calculate_TFIDF (tf, idf):
+    tfidf_list = []
+    for i in range(0, len(tf)):
+        if tf[i][0] == idf[i][0]:
+            tfidf = tf[i][1] * idf[i][1]
+            tfidf_list.append((tf[i][0], round(tfidf, 2)))
+    return tfidf_list
 
-#takes in a document
 def term_freq (filename):
     with open(filename, 'r') as file:
         input_ = file.read()
-       # print(f'{filename}: {input_}')
         c = Counter(input_.split())
-       # print(c)
         freq = c.most_common()
-    #print(freq)
     return freq
-#returns [(word, counter), (word2, counter), etc]
 
 preproc_docs = []
-with open('tfidf_docs.txt', 'r') as all_files:
+with open('test.txt', 'r') as all_files:
     reader = csv.reader(all_files)
     for row in reader:
         result = []
@@ -125,5 +127,17 @@ IDF = dict()
 for key, value in TF_values.items():
     IDF[key] = calculate_IDF(value)
 
-#print(TF)
-print(IDF)
+TF_IDF = dict()
+for key in TF:
+    tf = sorted(TF[key], key=lambda tup: tup[0])
+    idf = sorted(IDF[key], key=lambda tup: tup[0])
+    TF_IDF[key] = calculate_TFIDF(tf, idf)
+    top_5 = (sorted(TF_IDF[key], key=lambda tup: tup[1]))[0:5]
+    output = open('tfidf_' + key.split('_')[1], 'w')
+    output.write(str(top_5))
+    output.close()
+
+#print(TF_IDF)
+#print(TF['preproc_d3'])
+#print('\n')
+#print(IDF['preproc_d3'])
