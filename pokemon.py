@@ -47,7 +47,6 @@ def missingTypeFix():
                 else:
                     writer.writerow(row)
 
-
 # Question 3
 def missingValFix():
     aThreshAtk = []     # Atk for pokemons >= level threshold
