@@ -37,7 +37,7 @@ def missingTypeFix():
     with open('pokemonTrain.csv') as infile: 
         reader = csv.reader(infile)
     
-        with open('pokemonResult.csv','w',newline='') as csvfile:
+        with open('pokemon2.csv','w',newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
             
             for row in reader:
@@ -86,12 +86,12 @@ def missingValFix():
         bAvgDef = round(sum(bThreshDef)/len(bThreshDef), 1)
         bAvgHp = round(sum(bThreshHp)/len(bThreshHp), 1)
         
-        with open('pokemonResult.csv') as infile: 
+        with open('pokemon2.csv') as infile: 
             reader = csv.DictReader(infile)
             with open('pokemonResult.csv','w',newline='') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames = reader.fieldnames, delimiter = ',')
 
-               # writer.writeheader()
+                writer.writeheader()
                 for row in reader:
                     if float(row['level']) > threshold:
                         if row['atk'] == 'NaN':
